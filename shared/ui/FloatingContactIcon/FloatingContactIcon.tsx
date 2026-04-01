@@ -27,7 +27,7 @@ export const FloatingContactIcon: React.FC = () => {
                 initial={{ opacity: 0, x: 20, scale: 0.8 }}
                 animate={{ opacity: 1, x: -12, scale: 1 }}
                 exit={{ opacity: 0, x: 20, scale: 0.8 }}
-                className="absolute right-full mr-s-12 bg-black backdrop-blur-md border border-brand-primary-50 text-brand-primary px-s-16 py-s-8 rounded-s-8 font-mono text-s-14 font-bold tracking-widest whitespace-nowrap shadow-[0_0_15px_rgba(0,255,65,0.2)]"
+                className="absolute right-full mr-s-12 bg-bg-surface backdrop-blur-md border border-brand-primary-50 text-brand-primary px-s-16 py-s-8 rounded-s-8 font-mono text-s-14 font-bold tracking-widest whitespace-nowrap shadow-[0_0_15px_rgba(0,255,65,0.2)]"
               >
                 <div className="flex items-center gap-s-8">
                   <span className="w-s-8 h-s-8 bg-brand-primary animate-pulse rounded-full" />
@@ -51,7 +51,7 @@ export const FloatingContactIcon: React.FC = () => {
                 ease: "easeInOut"
               }
             }}
-            className="w-s-64 h-s-64 bg-black border-2 border-brand-primary rounded-full flex items-center justify-center text-brand-primary backdrop-blur-md group overflow-hidden relative"
+            className="w-s-64 h-s-64 bg-bg-surface border-2 border-brand-primary rounded-full flex items-center justify-center text-brand-primary backdrop-blur-md group overflow-hidden relative"
           >
             {/* Hacking scanning line effect */}
             <motion.div

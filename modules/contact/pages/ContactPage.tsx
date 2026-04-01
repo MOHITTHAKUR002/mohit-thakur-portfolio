@@ -136,7 +136,7 @@ export const ContactPage: React.FC = () => {
           {/* Animated Background Decoration */}
           <div className="absolute -inset-s-4 bg-brand-primary-10 blur-s-40 opacity-20 group-hover:opacity-40 transition-opacity duration-500 rounded-s-24" />
 
-          <div className="relative bg-black-60 backdrop-blur-xl p-s-30 md:p-s-60 rounded-s-24 overflow-hidden border-s-2 border-brand-primary-10 group-hover:border-brand-primary-30 transition-colors">
+          <div className="relative bg-bg-surface backdrop-blur-xl p-s-30 md:p-s-60 rounded-s-24 overflow-hidden border-s-2 border-brand-primary-10 group-hover:border-brand-primary-30 transition-colors">
             {/* Terminal Header */}
             <div className="absolute top-0 left-0 w-full h-s-8 bg-brand-primary-20" />
             <div className="flex items-center justify-between mb-s-40">

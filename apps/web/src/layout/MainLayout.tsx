@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect } from 'react';
 import { Navbar } from '../common/Navbar/Navbar';
 import { Footer } from '../common/Footer/Footer';
 import { CustomCursor } from '@shared/ui/Cursor/CustomCursor';
@@ -16,6 +17,12 @@ export const MainLayout: React.FC = () => {
 
   // We track the very first mount to pass the prop correctly
   const isFirst = isFirstVisitRef.current;
+  const { pathname } = useLocation();
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <div className="banner-gradient min-h-screen bg-bg-page text-text-primary selection:bg-brand-primary selection:text-button-primary-text font-secondary flex flex-col">

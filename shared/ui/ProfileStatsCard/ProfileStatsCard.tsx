@@ -16,7 +16,7 @@ interface ProfileStatsCardProps {
 
 export const ProfileStatsCard: React.FC<ProfileStatsCardProps> = ({ title, stats, avatarUrl, className = "" }) => {
   return (
-    <div className={`relative bg-black-60 backdrop-blur-s-xl border-s-2 border-brand-primary-20 rounded-s-24 overflow-hidden p-s-24 md:p-s-32 font-mono shadow-s-md ${className}`}>
+    <div className={`relative bg-bg-surface ckdrop-blur-s-xl border-s-2 border-brand-primary-20 rounded-s-24 overflow-hidden p-s-24 md:p-s-32 font-mono shadow-s-md ${className}`}>
       {/* Decorative scanline */}
       <motion.div
         animate={{ y: ["-100%", "200%"] }}
@@ -71,7 +71,7 @@ export const ProfileStatsCard: React.FC<ProfileStatsCardProps> = ({ title, stats
             transition={{ delay: 0.1 * idx }}
             className="flex flex-col gap-s-6"
           >
-            <span className="text-s-10 md:text-s-11 text-brand-primary-40 font-black uppercase tracking-[0.2em] leading-none">
+            <span className="text-s-10 md:text-s-11 text-brand-primary font-black uppercase tracking-[0.2em] leading-none">
               {stat.label}
             </span>
             <span className={`text-s-18 md:text-s-22 font-black ${stat.color || 'text-brand-primary'} tracking-tight leading-none`}>
@@ -82,15 +82,15 @@ export const ProfileStatsCard: React.FC<ProfileStatsCardProps> = ({ title, stats
       </div>
 
       {/* Technical footer */}
-      <div className="mt-s-40 pt-s-16 border-t-s-1 border-brand-primary-10 flex justify-between items-end">
+      <div className="mt-s-40 pt-s-16 border-t-s-1 border-brand-primary flex justify-between items-end">
         <div className="flex gap-s-6">
           {[1, 2, 3, 4].map(i => (
             <div key={i} className="w-s-16 h-s-6 bg-brand-primary-20 rounded-s-2" />
           ))}
         </div>
         <div className="text-right">
-          <div className="text-s-9 text-brand-primary-20 leading-none mb-s-4 uppercase tracking-[0.2em] font-bold">Encryption</div>
-          <div className="text-s-11 text-brand-primary-40 font-black tracking-[0.2em] uppercase">AES_256_PRO</div>
+          <div className="text-s-9 text-brand-primary leading-none mb-s-4 uppercase tracking-[0.2em] font-bold">Encryption</div>
+          <div className="text-s-11 text-brand-primary font-black tracking-[0.2em] uppercase">AES_256_PRO</div>
         </div>
       </div>
     </div>
