@@ -1,0 +1,14 @@
+---
+name: "Mohit Thakur"
+role: "Web Designer"
+greeting: "Hi, I'm"
+cta: "View My Work"
+contact: "Contact Me"
+---
+
+A dedicated and detail-oriented web designer with experience in creating engaging, responsive, and user-friendly websites. Proficient in HTML, CSS, JavaScript, and UI/UX design principles. Skilled in using design tools like Adobe XD, Figma, and Photoshop to bring concepts to life. 
+
+Strong ability to collaborate with developers and clients to deliver tailored web solutions that enhance user experience and meet business objectives. Passionate about staying updated with the latest design trends and technologies.
+
+**Hobbies:**
+I have a passion for playing volleyball and find joy in discovering new music to match every mood. Exploring new places excites me, and I love the thrill of adventure. I also enjoy expressing my creativity through drawing and find fulfillment in helping others whenever I can.

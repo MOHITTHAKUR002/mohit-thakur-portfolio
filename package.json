@@ -1,0 +1,16 @@
+{
+  "name": "centeric-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm run dev -w web",
+    "build": "npm run build -w web",
+    "lint": "npm run lint -w web",
+    "preview": "npm run preview -w web",
+    "parse": "node scripts/parseMarkdown.js"
+  },
+  "workspaces": [
+    "apps/*"
+  ]
+}

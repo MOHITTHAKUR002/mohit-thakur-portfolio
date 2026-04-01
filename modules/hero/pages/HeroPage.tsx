@@ -1,0 +1,193 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import personalData from '@/content/personal.json';
+import { SectionWrapper } from '@shared/ui/SectionWrapper/SectionWrapper';
+import { Button } from '@shared/ui/Button/Button';
+import { ArrowRight, Terminal, Code2 } from 'lucide-react';
+import { fadeInUp, staggerContainer } from '@/animations/pageTransitions';
+import { TiltCard } from '@shared/ui/TiltCard/TiltCard';
+import profilePic from '../assets/Mohit.jpeg';
+
+export const HeroPage: React.FC = () => {
+  const metadata = personalData.metadata as { name: string; role: string; greeting: string; cta: string };
+  const fullName = metadata.name;
+  const [displayText, setDisplayText] = React.useState('');
+  const [isDeleting, setIsDeleting] = React.useState(false);
+  const [charIndex, setCharIndex] = React.useState(0);
+  const typingSpeed = isDeleting ? 50 : 150;
+  const pauseTime = 3000;
+
+  React.useEffect(() => {
+    const handleTyping = () => {
+      if (!isDeleting && charIndex <= fullName.length) {
+        setDisplayText(fullName.substring(0, charIndex));
+        setCharIndex((prev) => prev + 1);
+      } else if (isDeleting && charIndex >= 0) {
+        setDisplayText(fullName.substring(0, charIndex));
+        setCharIndex((prev) => prev - 1);
+      }
+
+      if (charIndex === fullName.length + 1 && !isDeleting) {
+        setTimeout(() => setIsDeleting(true), pauseTime);
+      } else if (charIndex === -1 && isDeleting) {
+        setIsDeleting(false);
+        setCharIndex(0);
+      }
+    };
+
+    const timer = setTimeout(handleTyping, typingSpeed);
+    return () => clearTimeout(timer);
+  }, [charIndex, isDeleting, fullName]);
+
+  const contentTokens = personalData.content.split('\n\n');
+  const shortSummary = contentTokens.length > 0 ? contentTokens[0] : "Passionate about staying updated with the latest design trends and technologies.";
+
+  const imageVariants = {
+    hidden: { opacity: 0, scale: 0.8, rotate: -5 },
+    show: {
+      opacity: 1,
+      scale: 1,
+      rotate: 0,
+      transition: { type: "spring" as const, duration: 1.5, bounce: 0.4 }
+    }
+  };
+
+  const floatAnimation = {
+    y: [-10, 10, -10],
+    transition: {
+      duration: 6,
+      repeat: Infinity,
+      ease: "easeInOut" as const
+    }
+  };
+
+  return (
+    <SectionWrapper id="hero" className="min-h-screen flex items-center pt-s-100 pb-s-60">
+      <div className="w-full flex flex-col lg:flex-row gap-s-30 lg:gap-s-60 items-center justify-between">
+
+        {/* Left Column: Text */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate="show"
+          className="flex-1 w-full flex flex-col gap-s-24 items-start z-10"
+        >
+          <motion.div variants={fadeInUp} className="flex items-center gap-s-16 bg-brand-primary-15 px-s-24 py-s-12 rounded-full border border-brand-primary-50 shadow-s-sm mb-s-10">
+            <Terminal size={window.innerWidth > 768 ? 20 : 18} className="text-brand-primary" />
+            <p className="text-s-16 md:text-s-18 font-mono font-bold text-brand-primary tracking-[0.2em] uppercase">
+              {metadata.greeting}
+            </p>
+          </motion.div>
+
+          <motion.h1
+            variants={fadeInUp}
+            animate={{
+              x: isDeleting ? 0 : [0, -1, 1, 0, 0],
+              y: isDeleting ? 0 : [0, 1, -1, 0, 0],
+              textShadow: !isDeleting && charIndex > fullName.length
+                ? [
+                  "0 0 calc(var(--1) * 8) rgba(0,255,65,0.3)",
+                  "calc(var(--1) * 2) 0 #ff0000, calc(var(--1) * -2) 0 #0000ff, 0 0 calc(var(--1) * 8) rgba(0,255,65,0.3)",
+                  "0 0 calc(var(--1) * 8) rgba(0,255,65,0.3)"
+                ]
+                : "0 0 calc(var(--1) * 8) rgba(0,255,65,0.3)",
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              repeatDelay: 1,
+              times: [0, 0.1, 0.2, 0.3, 1]
+            }}
+            className="text-s-44 md:text-s-80 lg:text-s-96 font-black leading-[1] tracking-tighter text-text-primary flex items-center"
+          >
+            <span className="drop-shadow-[0_0_calc(var(--1)*8)_rgba(0,255,65,0.3)]">{displayText}</span>
+            <motion.span
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+              className="text-brand-primary ml-s-4"
+            >
+              _
+            </motion.span>
+          </motion.h1>
+
+          <motion.div variants={fadeInUp} className="flex items-center gap-s-16 mt-s-10">
+            <Code2 size={24} className="text-brand-primary" />
+            <h2 className="text-s-24 md:text-s-32 font-mono font-bold text-text-secondary leading-tight uppercase tracking-wide">
+              {metadata.role}
+            </h2>
+          </motion.div>
+
+          <motion.p variants={fadeInUp} className="text-s-16 font-mono text-text-muted max-w-s-600 leading-relaxed mt-s-10 border-l-s-2 border-brand-primary-50 pl-s-16">
+            {shortSummary}
+          </motion.p>
+
+          <motion.div variants={fadeInUp} className="mt-s-30 flex flex-wrap gap-s-20 items-center">
+            <Button
+              variant="gradient"
+              label={metadata.cta}
+              icon={<ArrowRight size={20} />}
+              onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+            />
+            <a href="#contact" className="text-s-14 md:text-s-16 font-mono font-bold text-brand-primary hover:underline underline-offset-[calc(var(--1)*8)] transition-all hover:drop-shadow-[0_0_calc(var(--1)*8)_rgba(0,255,65,0.8)]">
+              // Initiate_Contact
+            </a>
+          </motion.div>
+        </motion.div>
+
+        {/* Right Column: Floating Picture Card */}
+        <motion.div
+          variants={imageVariants}
+          initial="hidden"
+          animate="show"
+          className="flex-shrink-0 flex justify-center lg:justify-end z-10 relative mt-s-40 lg:mt-0 w-full lg:w-auto"
+        >
+          {/* Cyberpunk background glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-s-400 h-s-400 bg-brand-primary-10 rounded-full blur-s-100 -z-10 pointer-events-none"></div>
+
+          <TiltCard
+            depth={20}
+            zTranslate={40}
+            animate={floatAnimation}
+            className="relative w-s-260 h-s-320 md:w-s-360 md:h-s-420 p-s-4 bg-gradient-to-br from-brand-primary-60 via-surface-80 to-brand-primary-20 backdrop-blur-md shadow-s-md rounded-s-24 overflow-hidden"
+          >
+            {/* The Actual Picture Container */}
+            <div className="relative w-full h-full rounded-s-20 overflow-hidden bg-bg-inverse border border-brand-primary-40 group">
+              <img
+                src={profilePic}
+                alt={metadata.name}
+                className="w-full h-full object-cover transition-all duration-700 ease-in-out group-hover:scale-105 filter grayscale contrast-125 brightness-90 group-hover:grayscale-0 group-hover:brightness-100"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://ui-avatars.com/api/?name=Mohit+Thakur&background=0a0a0a&color=00ff41&size=512';
+                }}
+              />
+
+              {/* Scanline overlay */}
+              <motion.div
+                initial={{ y: "-100%" }}
+                animate={{ y: "200%" }}
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                className="absolute top-0 left-0 w-full h-s-60 bg-gradient-to-b from-transparent via-brand-primary-20 to-transparent pointer-events-none"
+              />
+
+              {/* Techy Corner Details */}
+              <div className="absolute top-0 left-0 w-s-30 h-s-30 border-t-s-4 border-l-s-4 border-brand-primary rounded-tl-s-12 opacity-80 pointer-events-none"></div>
+              <div className="absolute top-0 right-0 w-s-30 h-s-30 border-t-s-4 border-r-s-4 border-brand-primary rounded-tr-s-12 opacity-80 pointer-events-none"></div>
+              <div className="absolute bottom-0 left-0 w-s-30 h-s-30 border-b-s-4 border-l-s-4 border-brand-primary rounded-bl-s-12 opacity-80 pointer-events-none"></div>
+              <div className="absolute bottom-0 right-0 w-s-30 h-s-30 border-b-s-4 border-r-s-4 border-brand-primary rounded-br-s-12 opacity-80 pointer-events-none"></div>
+
+            </div>
+
+            {/* Data HUD badges */}
+            <div className="absolute top-s-20 -left-s-16 bg-bg-page border border-brand-primary px-s-12 py-s-4 text-s-10 font-mono text-brand-primary shadow-s-sm rounded-s-4">
+              STS: ONLINE
+            </div>
+            <div className="absolute bottom-s-30 -right-s-16 bg-brand-primary text-bg-page px-s-12 py-s-4 text-s-10 font-mono font-bold tracking-widest uppercase shadow-s-md rounded-s-4">
+              {metadata.role}
+            </div>
+          </TiltCard>
+        </motion.div>
+
+    </div>
+    </SectionWrapper>
+  );
+};
