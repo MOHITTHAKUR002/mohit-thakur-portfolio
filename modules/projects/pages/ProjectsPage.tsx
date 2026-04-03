@@ -11,7 +11,9 @@ export const ProjectsPage: React.FC = () => {
 
   const projects = content.split('## Project: ').filter(Boolean).map((section: string) => {
     const lines = section.trim().split('\n');
-    const title = lines[0].trim();
+    const titleMatch = lines[0].match(/(.*) \[(Status: .*)\]/);
+    const title = titleMatch ? titleMatch[1].trim() : lines[0].trim();
+    const status = titleMatch ? titleMatch[2].trim() : null;
 
     let category = '', role = '', desc = '', link = '';
 
@@ -25,7 +27,7 @@ export const ProjectsPage: React.FC = () => {
       }
     });
 
-    return { title, category, role, desc, link };
+    return { title, status, category, role, desc, link };
   });
 
   const getCategoryIcon = (category: string) => {
@@ -124,9 +126,17 @@ export const ProjectsPage: React.FC = () => {
                         </div>
 
                         {/* Individual Project Name (The Milestone) */}
-                        <h3 className={`text-s-20 md:text-s-32 font-black text-text-primary uppercase tracking-tight italic mb-s-10 group-hover:text-brand-primary transition-colors duration-300 leading-tight`}>
-                          {project.title}
-                        </h3>
+                        <div className={`flex flex-col ${isEven ? 'md:items-end' : 'md:items-start'} gap-s-4 mb-s-10`}>
+                          <h3 className={`text-s-24 md:text-s-34 font-black text-text-primary uppercase tracking-tighter italic group-hover:text-brand-primary transition-colors duration-300 leading-tight`}>
+                            {project.title}
+                          </h3>
+                          {project.status && (
+                            <span className="text-s-10 font-mono font-bold px-s-8 py-s-2 bg-brand-primary-10 border border-brand-primary-30 text-brand-primary rounded-s-4">
+                              {project.status.toUpperCase()}
+                            </span>
+                          )}
+                        </div>
+
 
                         {/* Description */}
                         <p className={`text-s-14 md:text-s-16 text-text-secondary leading-relaxed font-medium opacity-80 group-hover:opacity-100 transition-opacity italic max-w-lg mb-s-20 ${isEven ? 'md:ml-auto' : ''}`}>

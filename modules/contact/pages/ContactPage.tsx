@@ -1,21 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import contactData from '@/content/contact.json';
 import { SectionWrapper } from '@shared/ui/SectionWrapper/SectionWrapper';
-import { Button } from '@shared/ui/Button/Button';
-import { Send, Terminal, Cpu, Database, ShieldCheck, AlertTriangle, CheckCircle } from 'lucide-react';
+import profilePic from '@modules/hero/assets/Mohit.jpeg';
+import {
+  Cpu,
+  Database,
+  ShieldCheck,
+  Terminal,
+  Users,
+  Phone,
+  Mail,
+  MessageCircle,
+  ExternalLink,
+  ArrowRight
+} from 'lucide-react';
 
 export const ContactPage: React.FC = () => {
-  const { metadata } = contactData as {
-    metadata: { title: string; subtitle: string; email: string; form_submit: string; form_id: string };
+  const metadata = (contactData as any).metadata as {
+    title: string;
+    subtitle: string;
+    email: string;
+    phone: string;
+    whatsapp: string;
+    linkedin: string;
+    github: string;
+    why_hire_me: Array<{ title: string; description: string; icon: string }>
   };
 
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [scrambledTitle, setScrambledTitle] = useState(metadata.title);
 
-  // Title scramble effect on mount
   useEffect(() => {
     let iteration = 0;
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*";
@@ -35,208 +49,178 @@ export const ContactPage: React.FC = () => {
     return () => clearInterval(interval);
   }, [metadata.title]);
 
-  const validate = () => {
-    const newErrors: Record<string, string> = {};
-    if (formData.name.trim().length < 2) newErrors.name = 'ERR_NAME_SHORT';
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) newErrors.email = 'ERR_INVALID_PATH';
-    if (formData.message.trim().length < 10) newErrors.message = 'ERR_BUFFER_UNDERFLOW';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors((prev) => {
-      const updated = { ...prev };
-      delete updated[name];
-      return updated;
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-    setStatus('loading');
-
-    try {
-      const response = await fetch(`https://formspree.io/f/${metadata.form_id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ ...formData, _subject: `SYS-MSG: ${formData.name}` }),
-      });
-
-      if (response.ok) {
-        setStatus('success');
-        setFormData({ name: '', email: '', message: '' });
-      } else {
-        setStatus('error');
-      }
-    } catch (error) {
-      setStatus('error');
+  const getIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'Cpu': return <Cpu className="w-s-24 h-s-24" />;
+      case 'ShieldCheck': return <ShieldCheck className="w-s-24 h-s-24" />;
+      case 'Database': return <Database className="w-s-24 h-s-24" />;
+      case 'Terminal': return <Terminal className="w-s-24 h-s-24" />;
+      default: return <Terminal className="w-s-24 h-s-24" />;
     }
   };
 
-  return (
-    <SectionWrapper id="contact" className="py-s-80 min-h-screen flex items-center justify-center font-secondary">
-      <div className="w-full max-w-s-1200 mx-auto grid grid-cols-1 lg:grid-cols-12 gap-s-60 items-center px-s-20 md:px-0">
+  const socialLinks = [
+    { icon: <Users className="w-s-20 h-s-20" />, label: "LinkedIn", value: "mohit-thakur-dev", url: metadata.linkedin, color: "#0077b5" },
+    { icon: <Terminal className="w-s-20 h-s-20" />, label: "GitHub", value: "mohitthakur002", url: metadata.github, color: "#333" },
+    { icon: <MessageCircle className="w-s-20 h-s-20" />, label: "WhatsApp", value: "+91 82196****", url: metadata.whatsapp, color: "#25d366" },
+    { icon: <Mail className="w-s-20 h-s-20" />, label: "Email", value: metadata.email, url: `mailto:${metadata.email}`, color: "#ea4335" },
+    { icon: <Phone className="w-s-20 h-s-20" />, label: "Secure Line", value: metadata.phone, url: `tel:${metadata.phone}`, color: "#00ff41" },
+  ];
 
-        {/* Left Side: System Info */}
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemFade = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+
+  return (
+    <SectionWrapper id="contact" className="py-s-100 min-h-screen flex items-center justify-center font-secondary overflow-hidden">
+      <div className="w-full max-w-s-1200 mx-auto grid grid-cols-1 lg:grid-cols-12 gap-s-80 lg:gap-s-120 items-start px-s-20 md:px-0">
+        
+        {/* Left Side: Professional Profile */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="lg:col-span-5 flex flex-col gap-s-40"
+          className="lg:col-span-5 space-y-s-60"
         >
-          <div className="flex flex-col gap-s-16">
-            <span className="text-brand-primary-60 text-s-14 font-bold tracking-[0.3em] flex items-center gap-s-8 uppercase">
-              <Cpu className="w-s-14 h-s-14 animate-pulse text-brand-primary" /> System_Access_Point
-            </span>
-            <h1 className="text-s-48 md:text-s-64 font-black leading-none tracking-tighter text-brand-primary hacker-glitch">
-              {scrambledTitle}
-            </h1>
-            <p className="text-s-16 md:text-s-18 text-text-secondary opacity-60 leading-relaxed max-w-s-400 font-medium italic">
-              {"> "} {metadata.subtitle}
-            </p>
+          <div className="space-y-s-32">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="relative w-s-120 h-s-160 rounded-s-24 overflow-hidden border-s-2 border-brand-primary-40 bg-bg-inverse shadow-[0_0_25px_var(--brand-primary-15)] group"
+            >
+               <img 
+                 src={profilePic}
+                 alt="Mohit Thakur"
+                 className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500 contrast-125 brightness-90"
+                 onError={(e) => {
+                   (e.target as HTMLImageElement).src = 'https://ui-avatars.com/api/?name=Mohit+Thakur&background=00ff41&color=000&size=256';
+                 }}
+               />
+               <div className="absolute inset-0 bg-gradient-to-t from-black-60 to-transparent pointer-events-none" />
+               <div className="absolute bottom-s-8 left-s-8 right-s-8 h-s-2 bg-brand-primary-30 animate-pulse-slow" />
+            </motion.div>
+
+            <div className="space-y-s-20">
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-brand-primary-60 text-s-14 font-black tracking-[0.4em] flex items-center gap-s-12 uppercase"
+              >
+                <span className="w-s-40 h-s-1 bg-brand-primary-40" />
+                Secure_Uplink_Node
+              </motion.span>
+              <h1 className="text-s-54 md:text-s-80 font-black leading-none tracking-tighter text-brand-primary uppercase italic">
+                {scrambledTitle}
+              </h1>
+              <p className="text-s-18 md:text-s-20 text-text-secondary opacity-80 leading-relaxed font-medium italic border-l-s-4 border-brand-primary-20 pl-s-20 max-w-s-450">
+                {"> "} {metadata.subtitle}
+              </p>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-s-24">
-            {[
-              { icon: <Database className="w-s-20 h-s-20" />, label: "ENCRYPTION", value: "AES-256-GCM" },
-              { icon: <ShieldCheck className="w-s-20 h-s-20" />, label: "LOCATION", value: "SECURE_TUNNEL_MH" },
-              { icon: <Terminal className="w-s-20 h-s-20" />, label: "PROTOCOL", value: "HTTPS_NODE_V2" }
-            ].map((item, i) => (
+          {/* Contact Methods Grid */}
+          <div className="space-y-s-32">
+            <h3 className="text-s-12 font-black text-brand-primary-40 uppercase tracking-[0.3em] font-mono">Direct_Comm_Channels</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-s-16">
+              {socialLinks.map((link, i) => (
+                <motion.a
+                  key={i}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05 }}
+                  className="flex items-center gap-s-16 p-s-16 bg-bg-surface border border-brand-primary-10 rounded-s-12 hover:border-brand-primary transition-all group relative overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-brand-primary-5 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                  <div className="relative z-10 p-s-8 rounded-s-8 bg-brand-primary-10 text-brand-primary group-hover:bg-brand-primary group-hover:text-black transition-colors">
+                    {link.icon}
+                  </div>
+                  <div className="relative z-10">
+                    <p className="text-s-9 font-black text-brand-primary-40 uppercase tracking-widest">{link.label}</p>
+                    <p className="text-s-14 font-mono font-bold text-text-primary group-hover:text-brand-primary transition-colors">{link.value}</p>
+                  </div>
+                  <ExternalLink className="absolute right-s-16 top-s-16 w-s-12 h-s-12 opacity-0 group-hover:opacity-100 transition-opacity text-brand-primary" />
+                </motion.a>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-s-20">
+            <div className="w-s-12 h-s-12 rounded-full bg-brand-primary animate-pulse shadow-[0_0_15px_var(--brand-primary)]" />
+            <span className="text-s-12 font-mono font-bold text-brand-primary-60">STATUS: UPLINK_AVAILABLE_GLOBAL</span>
+          </div>
+        </motion.div>
+
+        {/* Right Side: Why Collaborate? */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="lg:col-span-7 space-y-s-40"
+        >
+          <div className="space-y-s-12">
+            <h2 className="text-s-28 md:text-s-38 font-black text-text-primary tracking-tight uppercase leading-tight">
+              Why Collaborate With <br /><span className="text-brand-primary italic">Mohit Thakur ?</span>
+            </h2>
+            <div className="w-s-full h-s-4 bg-brand-primary rounded-full" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-s-24">
+            {metadata.why_hire_me.map((item, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 + (i * 0.1) }}
-                className="flex items-center gap-s-20 p-s-16 bg-brand-primary-5 border-l-s-2 border-brand-primary-30 hover:bg-brand-primary-10 transition-colors group"
+                variants={itemFade}
+                className="bg-bg-surface border-s-1 border-brand-primary-10 p-s-32 rounded-s-24 hover:bg-brand-primary-5 transition-colors group relative overflow-hidden"
               >
-                <div className="text-brand-primary group-hover:scale-110 transition-transform">{item.icon}</div>
-                <div>
-                  <p className="text-s-10 font-bold text-brand-primary-40 uppercase tracking-widest leading-none mb-s-4">{item.label}</p>
-                  <p className="text-s-16 font-mono font-bold text-brand-primary-80 leading-none">{item.value}</p>
+                {/* Decorative scanning line */}
+                <div className="absolute top-0 right-0 w-s-64 h-s-64 bg-brand-primary-5 rounded-bl-full -mr-s-32 -mt-s-32 group-hover:scale-150 transition-transform duration-500" />
+                
+                <div className="mb-s-20 text-brand-primary bg-brand-primary-10 w-fit p-s-12 rounded-s-12 border border-brand-primary-20">
+                  {getIcon(item.icon)}
+                </div>
+                <h4 className="text-s-18 font-black text-brand-primary uppercase tracking-widest mb-s-12 font-mono">{item.title}</h4>
+                <p className="text-s-14 text-text-secondary leading-relaxed font-medium">
+                  {item.description}
+                </p>
+
+                <div className="mt-s-24 flex items-center gap-s-8 text-s-11 font-black text-brand-primary opacity-0 group-hover:opacity-100 transition-all -translate-x-4 group-hover:translate-x-0">
+                  OPTIMIZE_WORKFLOW <ArrowRight className="w-s-12 h-s-12" />
                 </div>
               </motion.div>
             ))}
           </div>
-        </motion.div>
 
-        {/* Right Side: Contact Terminal */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="lg:col-span-7 relative group"
-        >
-          {/* Animated Background Decoration */}
-          <div className="absolute -inset-s-4 bg-brand-primary-10 blur-s-40 opacity-20 group-hover:opacity-40 transition-opacity duration-500 rounded-s-24" />
-
-          <div className="relative bg-bg-surface backdrop-blur-xl p-s-30 md:p-s-60 rounded-s-24 overflow-hidden border-s-2 border-brand-primary-10 group-hover:border-brand-primary-30 transition-colors">
-            {/* Terminal Header */}
-            <div className="absolute top-0 left-0 w-full h-s-8 bg-brand-primary-20" />
-            <div className="flex items-center justify-between mb-s-40">
-              <div className="flex gap-s-8">
-                <div className="w-s-12 h-s-12 rounded-full bg-status-danger shadow-[0_0_calc(var(--1)*10)_var(--brand-primary)]" />
-                <div className="w-s-12 h-s-12 rounded-full bg-brand-primary-50" />
-                <div className="w-s-12 h-s-12 rounded-full bg-brand-primary-30" />
-              </div>
-              <span className="text-s-11 font-bold text-brand-primary-40 tracking-widest font-mono">CONSOLE_V1.0.4</span>
-            </div>
-
-            <form onSubmit={handleSubmit} className="flex flex-col gap-s-32">
-              {[
-                { name: "name", label: "USER_IDENTIFIER", type: "text", placeholder: "LOGIN NAME..." },
-                { name: "email", label: "COMM_CHANNEL", type: "email", placeholder: "EMAIL_ENDPOINT..." },
-              ].map((field) => (
-                <div key={field.name} className="flex flex-col gap-s-12 group/field">
-                  <label className="text-s-11 font-bold text-brand-primary-60 tracking-widest flex items-center gap-s-8 font-mono">
-                    <span className="w-s-4 h-s-4 bg-brand-primary rounded-full group-focus-within/field:animate-ping" />
-                    {field.label}
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={field.type}
-                      name={field.name}
-                      value={formData[field.name as keyof typeof formData]}
-                      onChange={handleChange}
-                      placeholder={field.placeholder}
-                      className="w-full bg-transparent text-brand-primary px-s-0 py-s-12 text-s-18 font-mono outline-none border-b-s-1 border-brand-primary-10 focus:border-brand-primary transition-all placeholder:text-brand-primary-20"
-                    />
-                    {errors[field.name] && (
-                      <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-status-danger text-s-11 mt-s-4 flex items-center gap-s-4 font-mono font-bold">
-                        <AlertTriangle className="w-s-12 h-s-12" /> {errors[field.name]}
-                      </motion.span>
-                    )}
-                  </div>
+          {/* Call to Action for Chatbot */}
+          <motion.div 
+             variants={itemFade}
+             className="bg-brand-primary p-s-40 rounded-s-24 text-black flex flex-col md:flex-row items-center justify-between gap-s-32 shadow-[0_20px_50px_rgba(0,255,65,0.1)]"
+          >
+             <div className="space-y-s-8 text-center md:text-left">
+                <h3 className="text-s-24 font-black tracking-tight uppercase leading-none">Ready to start?</h3>
+                <p className="text-s-14 font-bold opacity-70">Initialize a floating terminal to send a signal directly.</p>
+             </div>
+             <div className="flex items-center gap-s-16 font-black uppercase tracking-widest text-s-14 group">
+                <span className="hidden md:block">Use Chatbot</span>
+                <div className="w-s-54 h-s-54 rounded-full border-s-2 border-black flex items-center justify-center animate-bounce">
+                   <ArrowRight className="w-s-24 h-s-24" />
                 </div>
-              ))}
-
-              <div className="flex flex-col gap-s-12 group/field">
-                <label className="text-s-11 font-bold text-brand-primary-60 tracking-widest flex items-center gap-s-8 font-mono">
-                  <span className="w-s-4 h-s-4 bg-brand-primary rounded-full group-focus-within/field:animate-ping" />
-                  DATA_PAYLOAD
-                </label>
-                <div className="relative">
-                  <textarea
-                    rows={4}
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    placeholder="ENTER MESSAGE COMPONENTS..."
-                    className="w-full bg-transparent text-brand-primary px-s-0 py-s-12 text-s-18 font-mono outline-none border-b-s-1 border-brand-primary-10 focus:border-brand-primary transition-all resize-none placeholder:text-brand-primary-20 min-h-s-120"
-                  />
-                  {errors.message && (
-                    <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-status-danger text-s-11 mt-s-4 flex items-center gap-s-4 font-mono font-bold">
-                      <AlertTriangle className="w-s-12 h-s-12" /> {errors.message}
-                    </motion.span>
-                  )}
-                </div>
-              </div>
-
-              <div className="mt-s-20 flex flex-col gap-s-24">
-                <AnimatePresence mode="wait">
-                  {status === 'success' ? (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="flex items-center gap-s-12 p-s-20 bg-brand-primary-20 text-brand-primary rounded-s-12 border border-brand-primary-40 font-mono shadow-s-sm"
-                    >
-                      <CheckCircle className="w-s-24 h-s-24" />
-                      <span className="text-s-12 font-black tracking-[0.1em]">SUCCESS: TRANSMISSION_COMPLETE</span>
-                    </motion.div>
-                  ) : status === 'error' ? (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="flex items-center gap-s-12 p-s-20 bg-status-danger-10 text-status-danger rounded-s-12 border border-status-danger-40 font-mono shadow-s-sm"
-                    >
-                      <AlertTriangle className="w-s-24 h-s-24" />
-                      <span className="text-s-12 font-black tracking-[0.1em]">FATAL: UPLINK_FAILED</span>
-                    </motion.div>
-                  ) : null}
-                </AnimatePresence>
-
-                <Button
-                  type="submit"
-                  disabled={status === 'loading'}
-                  label={status === 'loading' ? 'PROCESSING...' : metadata.form_submit}
-                  icon={status === 'loading' ? null : <Send className="w-s-20 h-s-20" />}
-                  className="w-full h-s-64 bg-brand-primary text-black font-black text-s-20 tracking-[0.2em] rounded-s-4 group/btn relative overflow-hidden active:scale-[0.98] transition-transform"
-                >
-                  <motion.div
-                    animate={{ x: ["-100%", "100%"] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                    className="absolute top-0 left-0 w-full h-full bg-white-20 -skew-x-12 pointer-events-none"
-                  />
-                </Button>
-              </div>
-            </form>
-          </div>
+             </div>
+          </motion.div>
         </motion.div>
       </div>
     </SectionWrapper>

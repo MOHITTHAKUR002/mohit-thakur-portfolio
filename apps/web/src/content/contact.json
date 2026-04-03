@@ -3,8 +3,34 @@
     "title": "Get In Touch",
     "subtitle": "Let's build something amazing together",
     "email": "mohitthakur8907@gmail.com",
-    "form_submit": "Send Message",
-    "form_id": "mreokqgw"
+    "phone": "+91 8219697554",
+    "whatsapp": "https://wa.me/918219697554",
+    "linkedin": "https://linkedin.com/in/mohit-thakur-dev",
+    "github": "https://github.com/mohitthakur002",
+    "form_submit": "Send a Signal",
+    "form_id": "mreokqgw",
+    "why_hire_me": [
+      {
+        "title": "AI-Augmented Velocity",
+        "description": "Leveraging cutting-edge AI tools (Cursor, Claude, LLM-R&D) to deliver projects 2x faster without compromising code integrity.",
+        "icon": "Cpu"
+      },
+      {
+        "title": "Pixel-Perfect Precision",
+        "description": "Obsessed with UI/UX details, ensuring a seamless bridge between complex logic and immersive digital art.",
+        "icon": "ShieldCheck"
+      },
+      {
+        "title": "Clean Architecture",
+        "description": "Proven track record at Antier Solutions building scalable, modular React/Next.js ecosystems with 100% brand consistency.",
+        "icon": "Database"
+      },
+      {
+        "title": "Strategic Vision",
+        "description": "Not just a developer, but a technical strategist who aligns high-level business goals with robust technical execution.",
+        "icon": "Terminal"
+      }
+    ]
   },
-  "content": "I'm currently open for new opportunities and exciting projects. \n\n**Phone:** 8219697554\n**Location:** Mohali, India 160059\n\nWhether you have a question or just want to say hi, I'll try my best to get back to you!"
+  "content": "I'm currently open for new opportunities and exciting projects. Whether you have a complex technical challenge or just want to discuss the future of AI-driven web development, my uplink is always open.\n\nLocated in **Mohali, India**, available for global collaboration."
 }

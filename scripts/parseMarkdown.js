@@ -26,13 +26,54 @@ const parseMarkdown = (rawMarkdown) => {
   const frontMatterBlock = match[1];
   const content = rawMarkdown.replace(frontMatterRegex, '').trim();
   
+  // Minimal YAML-lite parser for nested objects and lists
   const metadata = {};
-  frontMatterBlock.split('\n').forEach(line => {
-    const divider = line.indexOf(':');
-    if (divider !== -1) {
-      const key = line.slice(0, divider).trim();
-      const value = line.slice(divider + 1).trim().replace(/^['"](.*)['"]$/, '$1');
-      metadata[key] = value;
+  const lines = frontMatterBlock.split('\n');
+  let currentKey = '';
+  let currentArray = null;
+  let currentObject = null;
+
+  lines.forEach(line => {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) return;
+
+    if (line.startsWith('  -') || line.startsWith('    ')) {
+      // It's a list item or a property of an object in a list
+      if (line.trim().startsWith('-')) {
+        // New object in list
+        const kvMatch = line.match(/-\s*(\w+):\s*(.*)/);
+        if (kvMatch) {
+          const k = kvMatch[1];
+          const v = kvMatch[2].trim().replace(/^['"](.*)['"]$/, '$1');
+          currentObject = { [k]: v };
+          if (currentArray) currentArray.push(currentObject);
+        }
+      } else {
+        // Property of current object
+        const kvMatch = line.match(/(\w+):\s*(.*)/);
+        if (kvMatch && currentObject) {
+          const k = kvMatch[1];
+          const v = kvMatch[2].trim().replace(/^['"](.*)['"]$/, '$1');
+          currentObject[k] = v;
+        }
+      }
+    } else {
+      // Top level key-value
+      const divider = line.indexOf(':');
+      if (divider !== -1) {
+        currentKey = line.slice(0, divider).trim();
+        const value = line.slice(divider + 1).trim();
+        
+        if (value === '') {
+          metadata[currentKey] = [];
+          currentArray = metadata[currentKey];
+          currentObject = null;
+        } else {
+          metadata[currentKey] = value.replace(/^['"](.*)['"]$/, '$1');
+          currentArray = null;
+          currentObject = null;
+        }
+      }
     }
   });
 

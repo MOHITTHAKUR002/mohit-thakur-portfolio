@@ -1,19 +1,19 @@
-import React, { useRef } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect } from 'react';
-import { Navbar } from '../common/Navbar/Navbar';
-import { Footer } from '../common/Footer/Footer';
-import { CustomCursor } from '@shared/ui/Cursor/CustomCursor';
-import { FloatingContactIcon } from '@shared/ui/FloatingContactIcon/FloatingContactIcon';
-import { TransitionLayout } from './TransitionLayout';
-import { SceneManager3D } from '../shared/ui/Scene3D/SceneManager3D';
-import { Loader3D } from '../common/Loader/Loader3D';
-import { usePageLoader } from '../hooks/usePageLoader';
+import React, { useRef } from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { useEffect } from "react";
+import { Navbar } from "../common/Navbar/Navbar";
+import { Footer } from "../common/Footer/Footer";
+import { CustomCursor } from "@shared/ui/Cursor/CustomCursor";
+import { FloatingContactIcon } from "@shared/ui/FloatingContactIcon/FloatingContactIcon";
+import { TransitionLayout } from "./TransitionLayout";
+import { SceneManager3D } from "../shared/ui/Scene3D/SceneManager3D";
+import { Loader3D } from "../common/Loader/Loader3D";
+import { usePageLoader } from "../hooks/usePageLoader";
 
 export const MainLayout: React.FC = () => {
   const { isLoading, completeLoading } = usePageLoader();
-  const isFirstVisitRef = useRef(!sessionStorage.getItem('mt_visited_flag'));
+  const isFirstVisitRef = useRef(!sessionStorage.getItem("mt_visited_flag"));
 
   // We track the very first mount to pass the prop correctly
   const isFirst = isFirstVisitRef.current;
@@ -45,7 +45,7 @@ export const MainLayout: React.FC = () => {
 
       <SceneManager3D />
       <Navbar />
-      <main className="flex-1 w-full mx-auto relative z-10 overflow-hidden">
+      <main className="flex-1 w-full mx-auto relative z-10">
         <TransitionLayout>
           <Outlet />
         </TransitionLayout>

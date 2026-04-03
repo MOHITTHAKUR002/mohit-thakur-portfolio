@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import personalData from '@/content/personal.json';
 import { SectionWrapper } from '@shared/ui/SectionWrapper/SectionWrapper';
 import { Button } from '@shared/ui/Button/Button';
@@ -9,38 +10,25 @@ import { TiltCard } from '@shared/ui/TiltCard/TiltCard';
 import profilePic from '../assets/Mohit.jpeg';
 
 export const HeroPage: React.FC = () => {
-  const metadata = personalData.metadata as { name: string; role: string; greeting: string; cta: string };
-  const fullName = metadata.name;
+  const navigate = useNavigate();
+  const metadata = personalData.metadata as { name: string; role: string; greeting: string; cta: string; contact: string };
+  const headline = personalData.content.split('\n\n')[0];
   const [displayText, setDisplayText] = React.useState('');
-  const [isDeleting, setIsDeleting] = React.useState(false);
   const [charIndex, setCharIndex] = React.useState(0);
-  const typingSpeed = isDeleting ? 50 : 150;
-  const pauseTime = 3000;
+  const typingSpeed = 50;
 
   React.useEffect(() => {
-    const handleTyping = () => {
-      if (!isDeleting && charIndex <= fullName.length) {
-        setDisplayText(fullName.substring(0, charIndex));
-        setCharIndex((prev) => prev + 1);
-      } else if (isDeleting && charIndex >= 0) {
-        setDisplayText(fullName.substring(0, charIndex));
-        setCharIndex((prev) => prev - 1);
-      }
-
-      if (charIndex === fullName.length + 1 && !isDeleting) {
-        setTimeout(() => setIsDeleting(true), pauseTime);
-      } else if (charIndex === -1 && isDeleting) {
-        setIsDeleting(false);
-        setCharIndex(0);
-      }
-    };
-
-    const timer = setTimeout(handleTyping, typingSpeed);
-    return () => clearTimeout(timer);
-  }, [charIndex, isDeleting, fullName]);
+    if (charIndex < headline.length) {
+      const timer = setTimeout(() => {
+        setDisplayText(prev => prev + headline[charIndex]);
+        setCharIndex(prev => prev + 1);
+      }, typingSpeed);
+      return () => clearTimeout(timer);
+    }
+  }, [charIndex, headline]);
 
   const contentTokens = personalData.content.split('\n\n');
-  const shortSummary = contentTokens.length > 0 ? contentTokens[0] : "Passionate about staying updated with the latest design trends and technologies.";
+  const shortSummary = contentTokens.length > 1 ? contentTokens[1] : "";
 
   const imageVariants = {
     hidden: { opacity: 0, scale: 0.8, rotate: -5 },
@@ -79,58 +67,41 @@ export const HeroPage: React.FC = () => {
             </p>
           </motion.div>
 
-          <motion.h1
-            variants={fadeInUp}
-            animate={{
-              x: isDeleting ? 0 : [0, -1, 1, 0, 0],
-              y: isDeleting ? 0 : [0, 1, -1, 0, 0],
-              textShadow: !isDeleting && charIndex > fullName.length
-                ? [
-                  "0 0 calc(var(--1) * 8) rgba(0,255,65,0.3)",
-                  "calc(var(--1) * 2) 0 #ff0000, calc(var(--1) * -2) 0 #0000ff, 0 0 calc(var(--1) * 8) rgba(0,255,65,0.3)",
-                  "0 0 calc(var(--1) * 8) rgba(0,255,65,0.3)"
-                ]
-                : "0 0 calc(var(--1) * 8) rgba(0,255,65,0.3)",
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              repeatDelay: 1,
-              times: [0, 0.1, 0.2, 0.3, 1]
-            }}
-            className="text-s-44 md:text-s-80 lg:text-s-96 font-black leading-[1] tracking-tighter text-text-primary flex items-center"
-          >
-            <span className="drop-shadow-[0_0_calc(var(--1)*8)_rgba(0,255,65,0.3)]">{displayText}</span>
-            <motion.span
-              animate={{ opacity: [1, 0, 1] }}
-              transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
-              className="text-brand-primary ml-s-4"
+          <motion.div variants={fadeInUp} className="relative">
+            <motion.h1
+              className="text-s-44 md:text-s-80 lg:text-s-80 font-black leading-[1.1] tracking-tighter text-text-primary mb-s-10"
             >
-              _
-            </motion.span>
-          </motion.h1>
-
-          <motion.div variants={fadeInUp} className="flex items-center gap-s-16 mt-s-10">
-            <Code2 size={24} className="text-brand-primary" />
-            <h2 className="text-s-24 md:text-s-32 font-mono font-bold text-text-secondary leading-tight uppercase tracking-wide">
-              {metadata.role}
-            </h2>
+              <span className="drop-shadow-[0_0_calc(var(--1)*8)_rgba(0,255,65,0.3)]">{displayText}</span>
+              <motion.span
+                animate={{ opacity: [1, 0, 1] }}
+                transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+                className="text-brand-primary ml-s-4"
+              >
+                _
+              </motion.span>
+            </motion.h1>
           </motion.div>
 
-          <motion.p variants={fadeInUp} className="text-s-16 font-mono text-text-muted max-w-s-600 leading-relaxed mt-s-10 border-l-s-2 border-brand-primary-50 pl-s-16">
-            {shortSummary}
-          </motion.p>
+          <motion.div variants={fadeInUp} className="flex flex-col gap-s-16 mt-s-10">
+            <div className="flex items-center gap-s-16">
+              <Code2 size={24} className="text-brand-primary" />
+              <h2 className="text-s-24 md:text-s-32 font-mono font-bold text-text-secondary leading-tight uppercase tracking-wide">
+                {metadata.name} // {metadata.role}
+              </h2>
+            </div>
+            <motion.p className="text-s-16 md:text-s-18 font-mono text-text-muted max-w-s-700 leading-relaxed border-l-s-2 border-brand-primary-30 pl-s-20 shadow-[inset_calc(var(--1)*10)_0_calc(var(--1)*30)_rgba(0,255,65,0.05)] py-s-10">
+              {shortSummary}
+            </motion.p>
+          </motion.div>
 
-          <motion.div variants={fadeInUp} className="mt-s-30 flex flex-wrap gap-s-20 items-center">
+          <motion.div variants={fadeInUp} className="mt-s-30 flex flex-wrap gap-s-30 items-center">
             <Button
-              variant="gradient"
-              label={metadata.cta}
+              variant="outline"
               icon={<ArrowRight size={20} />}
-              onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+              label={metadata.contact}
+              className="border-brand-primary text-brand-primary hover:bg-brand-primary-10"
+              onClick={() => navigate('/contact')}
             />
-            <a href="#contact" className="text-s-14 md:text-s-16 font-mono font-bold text-brand-primary hover:underline underline-offset-[calc(var(--1)*8)] transition-all hover:drop-shadow-[0_0_calc(var(--1)*8)_rgba(0,255,65,0.8)]">
-              // Initiate_Contact
-            </a>
           </motion.div>
         </motion.div>
 
@@ -187,7 +158,7 @@ export const HeroPage: React.FC = () => {
           </TiltCard>
         </motion.div>
 
-    </div>
+      </div>
     </SectionWrapper>
   );
 };
